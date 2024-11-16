@@ -47,7 +47,7 @@ ___
     - *definitely not a web application*;
     - C++ with Qt?; 
     - Java with JavaFX or something else?;
-    - strict first priority is Windows distro for the demo, porting for other systems *as a part of the future*;
+    - strict first priority is Linux distro for the demo, porting for other systems *as a part of the future*;
 - automatic recording, but what if the meeting is not turned on anywhere?
 - does this need to work even if the user is not powered on?
 
