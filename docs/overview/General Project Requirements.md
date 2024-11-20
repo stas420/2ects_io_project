@@ -23,7 +23,7 @@ Above being said, the application needs device's **sounds source**, **indicated 
 
 # Expected output note
 
-![[Note design.png]]
+![[note_design.png]]
 
 *Fig.1: Draft of an expected output note*
 
