@@ -1,9 +1,31 @@
 # ninja log v6
 3	579	7542714794424129	2ects_project_autogen/timestamp	f53a7a284fc3e855
-3	579	7542714794424129	2ects_project_autogen/mocs_compilation.cpp	f53a7a284fc3e855
 3	579	7542714794424129	D:/projekt IO/2ects_io_project/src/2ects_project/build/Desktop_Qt_6_8_0_MinGW_64_bit-Debug/2ects_project_autogen/timestamp	f53a7a284fc3e855
+3	579	7542714794424129	2ects_project_autogen/mocs_compilation.cpp	f53a7a284fc3e855
 3	579	7542714794424129	D:/projekt IO/2ects_io_project/src/2ects_project/build/Desktop_Qt_6_8_0_MinGW_64_bit-Debug/2ects_project_autogen/mocs_compilation.cpp	f53a7a284fc3e855
 584	2372	7542714795148359	CMakeFiles/2ects_project.dir/2ects_project_autogen/mocs_compilation.cpp.obj	aaff579b34711706
 588	2435	7542714795188315	CMakeFiles/2ects_project.dir/main.cpp.obj	bd8d9d33345a2315
 591	2458	7542714795227866	CMakeFiles/2ects_project.dir/mainwindow.cpp.obj	ff052b0bad0f03ca
 2458	2687	7542714813895202	2ects_project.exe	6df8691d79c0201
+23	621	7542743752805866	2ects_project_autogen/timestamp	f53a7a284fc3e855
+23	621	7542743752805866	2ects_project_autogen/mocs_compilation.cpp	f53a7a284fc3e855
+23	621	7542743752805866	D:/projekt IO/2ects_io_project/src/2ects_project/build/Desktop_Qt_6_8_0_MinGW_64_bit-Debug/2ects_project_autogen/timestamp	f53a7a284fc3e855
+23	621	7542743752805866	D:/projekt IO/2ects_io_project/src/2ects_project/build/Desktop_Qt_6_8_0_MinGW_64_bit-Debug/2ects_project_autogen/mocs_compilation.cpp	f53a7a284fc3e855
+622	2393	7542743753469985	CMakeFiles/2ects_project.dir/2ects_project_autogen/mocs_compilation.cpp.obj	9947c1187d7e7185
+626	2434	7542743753509879	CMakeFiles/2ects_project.dir/main.cpp.obj	78575b09376db3b
+629	2464	7542743753549775	CMakeFiles/2ects_project.dir/mainwindow.cpp.obj	8a6d99a53c6116f8
+2464	2664	7542743771894876	2ects_project.exe	6df8691d79c0201
+22	163	7542744265754460	2ects_project_autogen/timestamp	f53a7a284fc3e855
+22	163	7542744265754460	2ects_project_autogen/mocs_compilation.cpp	f53a7a284fc3e855
+22	163	7542744265754460	D:/projekt IO/2ects_io_project/src/2ects_project/build/Desktop_Qt_6_8_0_MinGW_64_bit-Debug/2ects_project_autogen/timestamp	f53a7a284fc3e855
+22	163	7542744265754460	D:/projekt IO/2ects_io_project/src/2ects_project/build/Desktop_Qt_6_8_0_MinGW_64_bit-Debug/2ects_project_autogen/mocs_compilation.cpp	f53a7a284fc3e855
+167	1996	7542744267200328	CMakeFiles/2ects_project.dir/mainwindow.cpp.obj	8a6d99a53c6116f8
+163	3768	7542744267160432	CMakeFiles/2ects_project.dir/main.cpp.obj	78575b09376db3b
+3769	4705	7542744303223989	2ects_project.exe	6df8691d79c0201
+23	167	7542745513427365	2ects_project_autogen/timestamp	f53a7a284fc3e855
+23	167	7542745513427365	2ects_project_autogen/mocs_compilation.cpp	f53a7a284fc3e855
+23	167	7542745513427365	D:/projekt IO/2ects_io_project/src/2ects_project/build/Desktop_Qt_6_8_0_MinGW_64_bit-Debug/2ects_project_autogen/timestamp	f53a7a284fc3e855
+23	167	7542745513427365	D:/projekt IO/2ects_io_project/src/2ects_project/build/Desktop_Qt_6_8_0_MinGW_64_bit-Debug/2ects_project_autogen/mocs_compilation.cpp	f53a7a284fc3e855
+172	2128	7542745514913389	CMakeFiles/2ects_project.dir/mainwindow.cpp.obj	8a6d99a53c6116f8
+167	3928	7542745514863523	CMakeFiles/2ects_project.dir/main.cpp.obj	78575b09376db3b
+3928	4842	7542745552472951	2ects_project.exe	6df8691d79c0201
