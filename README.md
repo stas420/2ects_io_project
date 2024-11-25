@@ -9,4 +9,4 @@ AGH Software Engineering 2024/2025 project:
     - Stanisław Niemczewski : <sniemczewski@student.agh.edu.pl>
 - Project overview is available in ```docs/overview``` directory
 
-The project is to be deployed with Qt and C++ on Windows desktop distribution.
+The project is to be deployed with Qt, [under *open-source* license](https://www.qt.io/download-open-source), and C++ on Windows desktop distribution.

@@ -1,0 +1,9 @@
+# ninja log v6
+3	579	7542714794424129	2ects_project_autogen/timestamp	f53a7a284fc3e855
+3	579	7542714794424129	2ects_project_autogen/mocs_compilation.cpp	f53a7a284fc3e855
+3	579	7542714794424129	D:/projekt IO/2ects_io_project/src/2ects_project/build/Desktop_Qt_6_8_0_MinGW_64_bit-Debug/2ects_project_autogen/timestamp	f53a7a284fc3e855
+3	579	7542714794424129	D:/projekt IO/2ects_io_project/src/2ects_project/build/Desktop_Qt_6_8_0_MinGW_64_bit-Debug/2ects_project_autogen/mocs_compilation.cpp	f53a7a284fc3e855
+584	2372	7542714795148359	CMakeFiles/2ects_project.dir/2ects_project_autogen/mocs_compilation.cpp.obj	aaff579b34711706
+588	2435	7542714795188315	CMakeFiles/2ects_project.dir/main.cpp.obj	bd8d9d33345a2315
+591	2458	7542714795227866	CMakeFiles/2ects_project.dir/mainwindow.cpp.obj	ff052b0bad0f03ca
+2458	2687	7542714813895202	2ects_project.exe	6df8691d79c0201
