@@ -299,6 +299,7 @@
 	"MOC_INCLUDES" : 
 	[
 		"D:/projekt IO/2ects_io_project/src/2ects_project/extlibs",
+		"D:/projekt IO/2ects_io_project/src/2ects_project/extlibs/curl-8.11.0_3-win64-mingw/include",
 		"E:/qt/Qt/6.8.0/mingw_64/include/QtCore",
 		"E:/qt/Qt/6.8.0/mingw_64/include",
 		"E:/qt/Qt/6.8.0/mingw_64/mkspecs/win32-g++",

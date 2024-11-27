@@ -53,7 +53,7 @@ build CMakeFiles/2ects_project.dir/2ects_project_autogen/mocs_compilation.cpp.ob
   DEFINES = -DMINGW_HAS_SECURE_API=1 -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NEEDS_QMAIN -DQT_WIDGETS_LIB -DUNICODE -DWIN32 -DWIN64 -D_ENABLE_EXTENDED_ALIGNED_STORAGE -D_UNICODE -D_WIN64
   DEP_FILE = CMakeFiles\2ects_project.dir\2ects_project_autogen\mocs_compilation.cpp.obj.d
   FLAGS = -DQT_QML_DEBUG -g -std=gnu++17 -fdiagnostics-color=always
-  INCLUDES = -I"D:/projekt IO/2ects_io_project/src/2ects_project/build/Desktop_Qt_6_8_0_MinGW_64_bit-Debug/2ects_project_autogen/include" -I"D:/projekt IO/2ects_io_project/src/2ects_project/extlibs" -isystem E:/qt/Qt/6.8.0/mingw_64/include/QtCore -isystem E:/qt/Qt/6.8.0/mingw_64/include -isystem E:/qt/Qt/6.8.0/mingw_64/mkspecs/win32-g++ -isystem E:/qt/Qt/6.8.0/mingw_64/include/QtWidgets -isystem E:/qt/Qt/6.8.0/mingw_64/include/QtGui
+  INCLUDES = -I"D:/projekt IO/2ects_io_project/src/2ects_project/build/Desktop_Qt_6_8_0_MinGW_64_bit-Debug/2ects_project_autogen/include" -I"D:/projekt IO/2ects_io_project/src/2ects_project/extlibs" -I"D:/projekt IO/2ects_io_project/src/2ects_project/extlibs/curl-8.11.0_3-win64-mingw/include" -isystem E:/qt/Qt/6.8.0/mingw_64/include/QtCore -isystem E:/qt/Qt/6.8.0/mingw_64/include -isystem E:/qt/Qt/6.8.0/mingw_64/mkspecs/win32-g++ -isystem E:/qt/Qt/6.8.0/mingw_64/include/QtWidgets -isystem E:/qt/Qt/6.8.0/mingw_64/include/QtGui
   OBJECT_DIR = CMakeFiles\2ects_project.dir
   OBJECT_FILE_DIR = CMakeFiles\2ects_project.dir\2ects_project_autogen
 
@@ -61,7 +61,7 @@ build CMakeFiles/2ects_project.dir/main.cpp.obj: CXX_COMPILER__2ects_project_uns
   DEFINES = -DMINGW_HAS_SECURE_API=1 -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NEEDS_QMAIN -DQT_WIDGETS_LIB -DUNICODE -DWIN32 -DWIN64 -D_ENABLE_EXTENDED_ALIGNED_STORAGE -D_UNICODE -D_WIN64
   DEP_FILE = CMakeFiles\2ects_project.dir\main.cpp.obj.d
   FLAGS = -DQT_QML_DEBUG -g -std=gnu++17 -fdiagnostics-color=always
-  INCLUDES = -I"D:/projekt IO/2ects_io_project/src/2ects_project/build/Desktop_Qt_6_8_0_MinGW_64_bit-Debug/2ects_project_autogen/include" -I"D:/projekt IO/2ects_io_project/src/2ects_project/extlibs" -isystem E:/qt/Qt/6.8.0/mingw_64/include/QtCore -isystem E:/qt/Qt/6.8.0/mingw_64/include -isystem E:/qt/Qt/6.8.0/mingw_64/mkspecs/win32-g++ -isystem E:/qt/Qt/6.8.0/mingw_64/include/QtWidgets -isystem E:/qt/Qt/6.8.0/mingw_64/include/QtGui
+  INCLUDES = -I"D:/projekt IO/2ects_io_project/src/2ects_project/build/Desktop_Qt_6_8_0_MinGW_64_bit-Debug/2ects_project_autogen/include" -I"D:/projekt IO/2ects_io_project/src/2ects_project/extlibs" -I"D:/projekt IO/2ects_io_project/src/2ects_project/extlibs/curl-8.11.0_3-win64-mingw/include" -isystem E:/qt/Qt/6.8.0/mingw_64/include/QtCore -isystem E:/qt/Qt/6.8.0/mingw_64/include -isystem E:/qt/Qt/6.8.0/mingw_64/mkspecs/win32-g++ -isystem E:/qt/Qt/6.8.0/mingw_64/include/QtWidgets -isystem E:/qt/Qt/6.8.0/mingw_64/include/QtGui
   OBJECT_DIR = CMakeFiles\2ects_project.dir
   OBJECT_FILE_DIR = CMakeFiles\2ects_project.dir
 
@@ -69,7 +69,7 @@ build CMakeFiles/2ects_project.dir/mainwindow.cpp.obj: CXX_COMPILER__2ects_proje
   DEFINES = -DMINGW_HAS_SECURE_API=1 -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NEEDS_QMAIN -DQT_WIDGETS_LIB -DUNICODE -DWIN32 -DWIN64 -D_ENABLE_EXTENDED_ALIGNED_STORAGE -D_UNICODE -D_WIN64
   DEP_FILE = CMakeFiles\2ects_project.dir\mainwindow.cpp.obj.d
   FLAGS = -DQT_QML_DEBUG -g -std=gnu++17 -fdiagnostics-color=always
-  INCLUDES = -I"D:/projekt IO/2ects_io_project/src/2ects_project/build/Desktop_Qt_6_8_0_MinGW_64_bit-Debug/2ects_project_autogen/include" -I"D:/projekt IO/2ects_io_project/src/2ects_project/extlibs" -isystem E:/qt/Qt/6.8.0/mingw_64/include/QtCore -isystem E:/qt/Qt/6.8.0/mingw_64/include -isystem E:/qt/Qt/6.8.0/mingw_64/mkspecs/win32-g++ -isystem E:/qt/Qt/6.8.0/mingw_64/include/QtWidgets -isystem E:/qt/Qt/6.8.0/mingw_64/include/QtGui
+  INCLUDES = -I"D:/projekt IO/2ects_io_project/src/2ects_project/build/Desktop_Qt_6_8_0_MinGW_64_bit-Debug/2ects_project_autogen/include" -I"D:/projekt IO/2ects_io_project/src/2ects_project/extlibs" -I"D:/projekt IO/2ects_io_project/src/2ects_project/extlibs/curl-8.11.0_3-win64-mingw/include" -isystem E:/qt/Qt/6.8.0/mingw_64/include/QtCore -isystem E:/qt/Qt/6.8.0/mingw_64/include -isystem E:/qt/Qt/6.8.0/mingw_64/mkspecs/win32-g++ -isystem E:/qt/Qt/6.8.0/mingw_64/include/QtWidgets -isystem E:/qt/Qt/6.8.0/mingw_64/include/QtGui
   OBJECT_DIR = CMakeFiles\2ects_project.dir
   OBJECT_FILE_DIR = CMakeFiles\2ects_project.dir
 
