@@ -12,6 +12,9 @@
 .idea/**/dictionaries
 .idea/**/shelf
 
+# Tesseract data
+**/tessdata/
+
 # AWS User-specific
 .idea/**/aws.xml
 
