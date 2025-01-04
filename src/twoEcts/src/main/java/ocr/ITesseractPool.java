@@ -1,3 +1,5 @@
+package ocr;
+
 import net.sourceforge.tess4j.ITesseract;
 import net.sourceforge.tess4j.Tesseract;
 
@@ -7,7 +9,7 @@ import java.util.concurrent.BlockingQueue;
 /**
  * A pool of Tesseract instances. Used to avoid creating a new Tesseract instance for each image.
  */
-public class ITesseractPool {
+class ITesseractPool {
     private final static String tessdataPath = "tessdata";
     private final BlockingQueue<ITesseract> pool;
 

@@ -1,4 +1,4 @@
-package SpeechToText;
+package speech_to_text;
 
 import com.google.api.gax.rpc.ClientStream;
 import com.google.api.gax.rpc.ResponseObserver;
@@ -12,7 +12,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.BlockingQueue;
 
 public class GoogleSpeech {
     public static void main(String[] args) throws Exception {

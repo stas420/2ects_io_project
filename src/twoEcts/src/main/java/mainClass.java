@@ -1,5 +1,5 @@
-import net.sourceforge.tess4j.ITesseract;
-import net.sourceforge.tess4j.Tesseract;
+import ocr.OCRProcessor;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
