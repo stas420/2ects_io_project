@@ -9,16 +9,15 @@ package ScreenCapturing;
         - make use of ScreenCapture class.
 */
 
-import javax.imageio.ImageIO;
+import Timestamping.TimestampManager;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.sql.Time;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.Optional;
 
 // 'enum' instead of class ensures thread-safety for singleton
 public enum ScreenCaptureManager {
@@ -33,20 +32,25 @@ public enum ScreenCaptureManager {
     }
 
 
-    // functional utilities - Activate() and Deactivate()
-    public static volatile boolean isActivated = false;
+    // functional utilities - isActivated(), Activate() and Deactivate()
+    private volatile boolean isActivated = false;
     private static final String dateTimeFormatPattern = "yyyy-MM-dd-HH-mm-ss"; //< TODO may be replaced with TimeManager class
-    private static String outputDirectory = "";
-    private static Robot robot = null;
-    private static ScheduledExecutorService scheduler = null;
+    private String outputDirectory = "";
+    private Robot robot = null;
+    private ScheduledExecutorService scheduler = null;
     private static final Integer screenshotPeriod = 5;
 
-    public static void Activate() {
-        try {
-            robot = new Robot();
-            outputDirectory = System.getProperty("user.home"); //< TODO we need some "tmp" directory
+    public boolean isActivated() {
+        return isActivated;
+    }
 
-            isActivated = true;
+    public void Activate() {
+        try {
+            this.robot = new Robot();
+            this.outputDirectory = System.getProperty("user.home"); //< TODO we need some "tmp" directory
+            this.Screenshots = new ArrayList<ScreenCapture>();
+
+            this.isActivated = true;
         }
         catch (Exception e) {
             System.out.println("ScreenCaptureManager::Activate | Method call failed, stack trace: ");
@@ -63,48 +67,54 @@ public enum ScreenCaptureManager {
                     captureScreenshot();
                 }
             }, 0, screenshotPeriod, TimeUnit.SECONDS);
+
+            System.out.println("ScreenCaptureManager::Activate | successfully activated");
         }
         else {
             scheduler = null;
         }
     }
 
-    public static void Deactivate() {
-        if (scheduler != null && !scheduler.isShutdown()) {
-            scheduler.shutdownNow();
+    public void Deactivate() {
+        if (this.scheduler != null && !this.scheduler.isShutdown()) {
+            this.scheduler.shutdownNow();
 
             try {
-                scheduler.awaitTermination(screenshotPeriod, TimeUnit.SECONDS);
+                this.scheduler.awaitTermination(screenshotPeriod, TimeUnit.SECONDS);
             } catch (InterruptedException e) {
                 System.out.println("ScreenCaptureManager::Deactivate | awaitTermination failed, stack trace: ");
                 e.printStackTrace();
             }
         }
 
-        robot = null;
-        outputDirectory = "";
-        scheduler = null;
-        isActivated = false;
+        this.robot = null;
+        this.outputDirectory = "";
+        this.scheduler = null;
+        this.isActivated = false;
+        this.Screenshots.clear();
+        this.Screenshots = null;
 
         System.out.println("ScreenCaptureManager::Deactivate");
     }
 
     // actual screenshotting
-    private static void captureScreenshot() {
-        if (!isActivated) {
+    private void captureScreenshot() {
+        if (!this.isActivated) {
             System.out.println("ScreenCaptureManager::captureScreenshot | Invalid method call, it's not activated");
             return;
         }
 
         try {
-            // TODO temporary implementation
             Rectangle screenRect = new Rectangle(Toolkit.getDefaultToolkit().getScreenSize());
-            BufferedImage capturedImage = robot.createScreenCapture(screenRect);
-            String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern(dateTimeFormatPattern));//< TODO should be obtained from a global manager
-            File outputFile = new File(outputDirectory + File.separator + "screenshot_" + timestamp + ".png");
-            ImageIO.write(capturedImage, "png", outputFile);
+            ScreenCapture sc = new ScreenCapture(
+                    this.robot.createScreenCapture(screenRect),
+                    TimestampManager.getInstance().getTimestamp()
+            );
 
-            System.out.println("ScreenCaptureManager::captureScreenshot | done and saved at: " + outputFile.getAbsolutePath());
+            if (!this.compareImages(sc.getImage(), this.Screenshots.getLast().getImage())) {
+                this.Screenshots.add(sc);
+                System.out.println("ScreenCaptureManager::captureScreenshot | new one done and saved, at: " + sc.getTimeStamp());
+            }
         }
         catch (Exception e) {
             System.out.println("ScreenCaptureManager::captureScreenshot | Method call failed, stack trace: ");
@@ -112,19 +122,112 @@ public enum ScreenCaptureManager {
         }
     }
 
-    // storing metadata
-    
+    // storing ScreenCaptures and accessing the oldest one
+    private ArrayList<ScreenCapture> Screenshots = null;
+
+    public Optional<ScreenCapture> popTheOldestScreenshot() {
+        if ((!this.isActivated) || this.Screenshots == null || Screenshots.isEmpty()) {
+            return Optional.empty();
+        }
+
+        Optional<ScreenCapture> _out = Optional.of(this.Screenshots.getFirst());
+        long _timestamp = this.Screenshots.getFirst().getTimeStamp();
+        int _index = 0;
+
+        for (int i = 1; i < this.Screenshots.size(); i++) {
+            if (this.Screenshots.get(i).getTimeStamp() < _timestamp) {
+                _index = i;
+                _timestamp = this.Screenshots.get(i).getTimeStamp();
+                _out = Optional.of(this.Screenshots.get(i));
+            }
+        }
+
+        this.Screenshots.remove(_index);
+        return _out;
+    }
+
+    // SSIM images comparison
+    private final double acceptableSSIMDifference = 0.9;
+
+    public boolean compareImages(BufferedImage img1, BufferedImage img2) {
+        if (img1.getWidth() != img2.getWidth() || img1.getHeight() != img2.getHeight()) {
+            return false;
+        }
+
+        int width = img1.getWidth();
+        int height = img1.getHeight();
+
+        double C1 = Math.pow(0.01 * 255, 2);
+        double C2 = Math.pow(0.03 * 255, 2);
+
+        double meanX = 0;
+        double meanY = 0;
+        double varianceX = 0;
+        double varianceY = 0;
+        double covariance = 0;
+
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                int rgb1 = img1.getRGB(x, y);
+                int rgb2 = img2.getRGB(x, y);
+
+                double grayX = (rgb1 >> 16 & 0xff) * 0.299 + (rgb1 >> 8 & 0xff) * 0.587 + (rgb1 & 0xff) * 0.114;
+                double grayY = (rgb2 >> 16 & 0xff) * 0.299 + (rgb2 >> 8 & 0xff) * 0.587 + (rgb2 & 0xff) * 0.114;
+
+                meanX += grayX;
+                meanY += grayY;
+            }
+        }
+
+        meanX /= (width * height);
+        meanY /= (width * height);
+
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                int rgb1 = img1.getRGB(x, y);
+                int rgb2 = img2.getRGB(x, y);
+
+                double grayX = (rgb1 >> 16 & 0xff) * 0.299 + (rgb1 >> 8 & 0xff) * 0.587 + (rgb1 & 0xff) * 0.114;
+                double grayY = (rgb2 >> 16 & 0xff) * 0.299 + (rgb2 >> 8 & 0xff) * 0.587 + (rgb2 & 0xff) * 0.114;
+
+                varianceX += Math.pow(grayX - meanX, 2);
+                varianceY += Math.pow(grayY - meanY, 2);
+                covariance += (grayX - meanX) * (grayY - meanY);
+            }
+        }
+
+        varianceX /= (width * height - 1);
+        varianceY /= (width * height - 1);
+        covariance /= (width * height - 1);
+
+        double numerator = (2 * meanX * meanY + C1) * (2 * covariance + C2);
+        double denominator = (Math.pow(meanX, 2) + Math.pow(meanY, 2) + C1) * (varianceX + varianceY + C2);
+
+        return (numerator / denominator) >= ScreenCaptureManager.getInstance().acceptableSSIMDifference;
+    }
 
     // test main
     public static void main(String[] args) {
         ScheduledExecutorService _scheduler = Executors.newSingleThreadScheduledExecutor();
 
         try {
-            Activate();
+            ScreenCaptureManager.getInstance().Activate();
+            TimestampManager.getInstance().Activate();
 
-            if (isActivated) {
+            if (ScreenCaptureManager.getInstance().isActivated()) {
                 Runnable task = () -> {
-                    Deactivate();
+                    boolean _v = ScreenCaptureManager.getInstance().compareImages(
+                      ScreenCaptureManager.getInstance().popTheOldestScreenshot().get().getImage(),
+                      ScreenCaptureManager.getInstance().popTheOldestScreenshot().get().getImage()
+                    );
+
+                    if (_v)
+                        System.out.println("The images are similar enough");
+                    else
+                        System.out.println("The images are NOT similar enough");
+
+                    TimestampManager.getInstance().Deactivate();
+                    ScreenCaptureManager.getInstance().Deactivate();
                     _scheduler.shutdownNow();
                 };
                 _scheduler.schedule(task, 3 * screenshotPeriod, TimeUnit.SECONDS);
@@ -132,7 +235,7 @@ public enum ScreenCaptureManager {
 
         } catch (Exception e) {
 
-            Deactivate();
+            ScreenCaptureManager.getInstance().Deactivate();
             _scheduler.shutdownNow();
 
             throw new RuntimeException(e);

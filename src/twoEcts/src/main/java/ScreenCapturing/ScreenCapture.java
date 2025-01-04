@@ -8,6 +8,24 @@ package ScreenCapturing;
     - well, that's it I guess.
 */
 
+import java.awt.image.BufferedImage;
+import java.time.LocalDateTime;
+
 public class ScreenCapture {
 
+    private BufferedImage image = null;
+    private long timeStamp = 0;
+
+    public ScreenCapture(BufferedImage image, long timeStamp) {
+        this.image = image;
+        this.timeStamp = timeStamp;
+    }
+
+    public long getTimeStamp() {
+        return timeStamp;
+    }
+
+    public BufferedImage getImage() {
+        return image;
+    }
 }
