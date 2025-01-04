@@ -2,18 +2,14 @@ package ocr;
 
 import net.sourceforge.tess4j.ITesseract;
 
-import java.io.File;
+import java.awt.image.BufferedImage;
 import java.util.Optional;
 import java.util.concurrent.Callable;
 
-/**
- * A worker that performs OCR on an image file.
- */
-class OCRWorker implements Callable<Optional<String>> {
-    private final File image;
-
+class BufferedImgOCRWorker implements Callable<Optional<String>> {
+    private final BufferedImage image;
     private final ITesseractPool tesseractPool;
-    public OCRWorker(File image, ITesseractPool pool) {
+    public BufferedImgOCRWorker(BufferedImage image, ITesseractPool pool) {
         this.image = image;
         this.tesseractPool = pool;
     }

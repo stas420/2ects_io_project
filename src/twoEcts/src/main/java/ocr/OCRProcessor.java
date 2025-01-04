@@ -1,5 +1,6 @@
 package ocr;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
@@ -29,7 +30,19 @@ public class OCRProcessor {
         if (closed) {
             throw new IllegalStateException("Processor is closed and cannot be used");
         }
-        return executorService.submit(new OCRWorker(image, tesseractPool));
+        return executorService.submit(new FileOCRWorker(image, tesseractPool));
+    }
+
+    /**
+     * Process a BufferedImage and return the OCR result. Can throw an IllegalStateException if the processor is closed.
+     * @param image the BufferedImage to process
+     * @return a Future containing the OCR result
+     */
+    public Future<Optional<String>> process(BufferedImage image) {
+        if (closed) {
+            throw new IllegalStateException("Processor is closed and cannot be used");
+        }
+        return executorService.submit(new BufferedImgOCRWorker(image, tesseractPool));
     }
 
     /**
