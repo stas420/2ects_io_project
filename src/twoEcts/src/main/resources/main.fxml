@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox spacing="10" alignment="CENTER" xmlns:fx="http://javafx.com/fxml" fx:controller="gui.MainController">
+    <Label text="Screen and Audio Recorder" style="-fx-font-size: 20px;" />
+    <Label fx:id="statusLabel" text="Status: Idle" />
+    <Label fx:id="timeLabel" text="00:00:00"/>
+
+    <HBox spacing="10" alignment="CENTER">
+        <TextField fx:id="emailTextField" promptText="Enter email address" />
+    </HBox>
+    <HBox spacing="10" alignment="CENTER">
+        <Button text="Add Email" onAction="#addEmail" />
+    </HBox>
+    <ListView fx:id="emailListView" prefHeight="150" />
+    <Button text="Remove Selected Email" onAction="#removeEmail" />
+
+    <HBox spacing="10" alignment="CENTER">
+        <Button text="Start Recording" onAction="#startRecording" />
+        <Button text="Stop Recording" onAction="#stopRecording" />
+    </HBox>
+    <Button text="Send Emails" onAction="#sendEmails" />
+</VBox>
