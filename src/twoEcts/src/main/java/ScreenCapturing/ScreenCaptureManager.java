@@ -23,7 +23,7 @@ import java.util.Optional;
 public enum ScreenCaptureManager {
 
     // singleton implementation
-    INSTANCE();
+    INSTANCE;
 
     private ScreenCaptureManager() {}
 
