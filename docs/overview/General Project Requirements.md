@@ -56,6 +56,6 @@ The notes are to be **always** be generated in all of formats specified above.
 
 # Technology choice
 
-Based on above skills matrix, and meeting discussion, the team decided to work with specified technologies, such as **Qt** environment with **C++** language (see: file ```Work Organisation```). The application will be provided for Windows desktop devices in the first place.
+Based on above skills matrix, and meeting discussion, the team decided to work with specified technologies, such as **IntelliJ IDEA** environment with **Java** language (see: file ```Work Organisation```). The application will be provided *for Windows desktop devices* in the first place.
 
 [^1]: OCR = Optical Character Recognition

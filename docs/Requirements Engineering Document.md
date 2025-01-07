@@ -98,17 +98,14 @@ Above diagrams picture how should the data flow look in this application - what 
 # Implementation and work schema 
 
 ### Tools:
-- Development environment: **Qt** (C++)
-	- probably with some CMake/bash scripts help for building purposes
-	- **Microsoft C++ VS** compiler (version to be specified)
-	- in addition to standard library, the project will make use of external libraries:
-		- [json parsing library](https://github.com/nlohmann/json)
-		- [voice to speech library - whisper dock](https://github.com/ErcinDedeoglu/WhisperDock)
-		- [curlpp for HTTP requests](https://github.com/jpbarrette/curlpp)
-		- [screen capture library](https://github.com/JKnightGURU/ScreenCaptureLib)
-		- [OCR from image library](https://github.com/tesseract-ocr/tesseract)
-- OS: **Windows 10 and 11**
-- additional needed software: **Docker**
+- **OS**: first-to-deliver **Windows 10 and 11**, and **other (MacOS/Linux)** as a future plan;
+- **Development environment**:
+	- *Java*, version 23, under *Maven*;
+	- *suggested IDE*: **[IntelliJ IDEA](https://www.jetbrains.com/idea/whatsnew/)**;
+	- usage of external modules: 
+		- [Google Speech-to-text API]()
+		- [Tesseract OCR processor]()
+		- [JavaFX GUI API]()
 
 ### Organisation framework
 
@@ -128,4 +125,4 @@ Using framework mentioned above, the application flow should look like below:
 
 *Fig. 4: A detailed UML diagram of application structure, picturing usage of chosen modules*
 
-The application should provide this using **Qt** framework over **C++** language, which also provides customisable **GUI** tools and development environment.
+The application should provide this using **JavaFX GUI** API over **Java** language.
