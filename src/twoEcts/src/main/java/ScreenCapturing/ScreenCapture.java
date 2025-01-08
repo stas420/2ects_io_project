@@ -11,6 +11,7 @@ package ScreenCapturing;
 import java.awt.image.BufferedImage;
 import java.time.LocalDateTime;
 
+// simple class, which is more of a "struct", representing a timestamped-screenshot
 public class ScreenCapture {
 
     private BufferedImage image = null;

@@ -18,22 +18,31 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
 
-// 'enum' instead of class ensures thread-safety for singleton
-public enum ScreenCaptureManager {
+// could be an 'enum' instead of class, which "ensures thread-safety for singleton"
+// but so far so good
+// -------------------------------------
+// the following class needs to be used in some kind of *app's main thread*
+// where there is called .getInstance().Activate() at the beginning
+// and .getInstance().Deactivate() at the end of the thread (ideally, in "finally" block)
+public class ScreenCaptureManager {
 
     // singleton implementation
-    INSTANCE;
+    private static ScreenCaptureManager INSTANCE = null;
 
     private ScreenCaptureManager() {}
 
     public static ScreenCaptureManager getInstance() {
+        if (INSTANCE == null) {
+            INSTANCE = new ScreenCaptureManager();
+        }
+
         return INSTANCE;
     }
 
-
     // functional utilities - isActivated(), Activate() and Deactivate()
-    private volatile boolean isActivated = false;
+    private AtomicBoolean isActivated = new AtomicBoolean(false);
     private static final String dateTimeFormatPattern = "yyyy-MM-dd-HH-mm-ss"; //< TODO may be replaced with TimeManager class
     private String outputDirectory = "";
     private Robot robot = null;
@@ -41,7 +50,7 @@ public enum ScreenCaptureManager {
     private static final Integer screenshotPeriod = 5;
 
     public boolean isActivated() {
-        return isActivated;
+        return isActivated.get();
     }
 
     public void Activate() {
@@ -50,20 +59,20 @@ public enum ScreenCaptureManager {
             this.outputDirectory = System.getProperty("user.home"); //< TODO we need some "tmp" directory
             this.Screenshots = new ArrayList<ScreenCapture>();
 
-            this.isActivated = true;
+            this.isActivated.set(true);
         }
         catch (Exception e) {
             System.out.println("ScreenCaptureManager::Activate | Method call failed, stack trace: ");
             e.printStackTrace();
 
-            isActivated = false;
+            isActivated.set(false);
             return;
         }
 
-        if (isActivated) {
+        if (isActivated.get()) {
             scheduler = Executors.newScheduledThreadPool(1);
             scheduler.scheduleAtFixedRate(() -> {
-                if (isActivated) {
+                if (isActivated.get()) {
                     captureScreenshot();
                 }
             }, 0, screenshotPeriod, TimeUnit.SECONDS);
@@ -76,6 +85,8 @@ public enum ScreenCaptureManager {
     }
 
     public void Deactivate() {
+        this.isActivated.set(false);
+
         if (this.scheduler != null && !this.scheduler.isShutdown()) {
             this.scheduler.shutdownNow();
 
@@ -90,16 +101,18 @@ public enum ScreenCaptureManager {
         this.robot = null;
         this.outputDirectory = "";
         this.scheduler = null;
-        this.isActivated = false;
         this.Screenshots.clear();
         this.Screenshots = null;
 
         System.out.println("ScreenCaptureManager::Deactivate");
     }
 
+
+
+
     // actual screenshotting
     private void captureScreenshot() {
-        if (!this.isActivated) {
+        if (!this.isActivated.get()) {
             System.out.println("ScreenCaptureManager::captureScreenshot | Invalid method call, it's not activated");
             return;
         }
@@ -122,11 +135,13 @@ public enum ScreenCaptureManager {
         }
     }
 
-    // storing ScreenCaptures and accessing the oldest one
+    // storing ScreenCaptures
     private ArrayList<ScreenCapture> Screenshots = null;
 
+    // return Optional of ScreenCapture object with the lowest .getTimestamp() output,
+    // and then *removes it* from the private list (hence why it's "pop")
     public Optional<ScreenCapture> popTheOldestScreenshot() {
-        if ((!this.isActivated) || this.Screenshots == null || Screenshots.isEmpty()) {
+        if ((!this.isActivated.get()) || this.Screenshots == null || Screenshots.isEmpty()) {
             return Optional.empty();
         }
 
@@ -146,9 +161,11 @@ public enum ScreenCaptureManager {
         return _out;
     }
 
-    // SSIM images comparison
+    // SSIM images comparison constant of acceptable difference
     private final double acceptableSSIMDifference = 0.9;
 
+    // returns true if images are "similar enough"
+    // (i.e. result of SSIM is greater-or-equal than acceptable value *acceptableSSIMDifference*)
     public boolean compareImages(BufferedImage img1, BufferedImage img2) {
         if (img1.getWidth() != img2.getWidth() || img1.getHeight() != img2.getHeight()) {
             return false;
@@ -206,7 +223,7 @@ public enum ScreenCaptureManager {
         return (numerator / denominator) >= ScreenCaptureManager.getInstance().acceptableSSIMDifference;
     }
 
-    // test main
+    // simple test main - not to be used in release!
     public static void main(String[] args) {
         ScheduledExecutorService _scheduler = Executors.newSingleThreadScheduledExecutor();
 
