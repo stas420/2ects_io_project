@@ -80,10 +80,15 @@ public class AudioCaptureManager {
 
             byte[] audioBytes = Files.readAllBytes(Paths.get(path));
             GoogleSpeech gs = new GoogleSpeech();
-            Future<Optional<String>> tts = gs.transcribe(audioBytes, "en-GB");
+            Future<Optional<String>> tts = gs.transcribe(audioBytes, "en-US");
             Optional<String> result = tts.get();
 
-            result.ifPresent(System.out::println);
+            if (result.isPresent()) {
+                System.out.println(result.get());
+            }
+            else {
+                System.out.println("Audio capture failed");
+            }
         }
         catch (Exception e) {
             e.printStackTrace();

@@ -6,7 +6,7 @@
     </appender>
 
     <logger name="net.sourceforge.tess4j" level="TRACE"/>
-    <root level="DEBUG">
+    <root level="WARN">
         <appender-ref ref="STDOUT"/>
     </root>
 </configuration>
