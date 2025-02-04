@@ -1,14 +1,19 @@
+import timestamping.TimestampManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import screen_capture.ScreenCapture;
 import screen_capture.ScreenCaptureManager;
+import javax.imageio.ImageIO;
 
 public class ScreenCaptureManagerTests {
 
@@ -42,7 +47,12 @@ public class ScreenCaptureManagerTests {
         BufferedImage image = new BufferedImage(100, 100, BufferedImage.TYPE_INT_ARGB);
         when(robot.createScreenCapture(any(Rectangle.class))).thenReturn(image);
 
+        TimestampManager.getInstance().Activate();
         screenCaptureManager.Activate();
+
+        Field robotField = ScreenCaptureManager.class.getDeclaredField("robot");
+        robotField.setAccessible(true);
+        robotField.set(screenCaptureManager, robot);
 
         // Use reflection to access the private captureScreenshot method
         Method captureScreenshotMethod = ScreenCaptureManager.class.getDeclaredMethod("captureScreenshot");
@@ -54,14 +64,18 @@ public class ScreenCaptureManagerTests {
         assertEquals(image, screenCapture.get().getImage());
 
         screenCaptureManager.Deactivate();
+        TimestampManager.getInstance().Deactivate();
     }
 
     @Test
-    public void testCompareImages() {
+    public void testCompareImages() throws IOException {
         BufferedImage img1 = new BufferedImage(100, 100, BufferedImage.TYPE_INT_ARGB);
         BufferedImage img2 = new BufferedImage(100, 100, BufferedImage.TYPE_INT_ARGB);
+        BufferedImage img3 = ImageIO.read(new File(getClass().getClassLoader().getResource("jotpeg.jpg").getFile()));
+
 
         boolean result = screenCaptureManager.compareImages(img1, img2);
         assertTrue(result);
+        assertFalse(screenCaptureManager.compareImages(img1, img3));
     }
 }

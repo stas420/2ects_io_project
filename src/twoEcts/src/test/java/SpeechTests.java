@@ -53,7 +53,7 @@ public class SpeechTests {
             Mixer.Info info = null;
 
             for (Mixer.Info mi : AudioSystem.getMixerInfo()) {
-                System.out.println(mi);
+                System.out.println(mi.getName());
                 if (mi.getName().contains("efault")) {
                     info = mi;
                 }
@@ -62,7 +62,7 @@ public class SpeechTests {
             TargetDataLine targetDataLine = AudioSystem.getTargetDataLine(audioFormat, info);
             AudioInputStream audioInputStream = new AudioInputStream(targetDataLine);
 
-            Optional<List<String>> results = googleSpeech.transcribe(audioInputStream, targetDataLine, 10_000, "en-US").get();
+            Optional<List<String>> results = googleSpeech.transcribe(audioInputStream, targetDataLine, (long) 1e10, "en-US").get();
             results.ifPresent(strings -> strings.forEach(System.out::println));
             Assertions.assertTrue(results.isPresent());
         } catch (Exception e) {

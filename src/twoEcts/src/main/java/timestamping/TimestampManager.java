@@ -1,4 +1,4 @@
-package Timestamping;
+package timestamping;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;

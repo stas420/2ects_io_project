@@ -9,7 +9,7 @@ package screen_capture;
         - make use of ScreenCapture class.
 */
 
-import Timestamping.TimestampManager;
+import timestamping.TimestampManager;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -126,9 +126,12 @@ public class ScreenCaptureManager {
                     TimestampManager.getInstance().getTimestamp()
             );
 
-            if (!this.compareImages(sc.getImage(), this.Screenshots.getLast().getImage())) {
+            if (this.Screenshots.isEmpty() || !this.compareImages(sc.getImage(), this.Screenshots.getLast().getImage())) {
                 this.Screenshots.add(sc);
                 System.out.println("ScreenCaptureManager::captureScreenshot | new one done and saved, at: " + sc.getTimeStamp());
+            }
+            else {
+                System.out.println("ScreenCaptureManager::captureScreenshot | no valid screenshot added to list");
             }
         }
         catch (Exception e) {
@@ -146,6 +149,7 @@ public class ScreenCaptureManager {
         if ((!this.isActivated.get()) || this.Screenshots == null || Screenshots.isEmpty()) {
             return Optional.empty();
         }
+
 
         Optional<ScreenCapture> _out = Optional.of(this.Screenshots.getFirst());
         long _timestamp = this.Screenshots.getFirst().getTimeStamp();

@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
+import java.util.logging.Logger;
 
 public class GoogleSpeech implements SpeechToText, AutoCloseable {
     private final SpeechClient speechClient;
@@ -55,11 +56,10 @@ public class GoogleSpeech implements SpeechToText, AutoCloseable {
         });
     }
 
-    public Future<Optional<List<String>>> transcribe(AudioInputStream audioInputStream, TargetDataLine targetDataLine, int durationInMillis,
+    public Future<Optional<List<String>>> transcribe(AudioInputStream audioInputStream, TargetDataLine targetDataLine, long durationInNanos,
                                                String languageCode) {
         return CompletableFuture.supplyAsync(() -> {
-            List<String> results = new ArrayList<>();
-
+            final List<String> results = new ArrayList<>();
             ResponseObserver<StreamingRecognizeResponse> responseObserver = new ResponseObserver<>() {
                 @Override
                 public void onStart(StreamController streamController) {}
@@ -68,7 +68,6 @@ public class GoogleSpeech implements SpeechToText, AutoCloseable {
                     streamingRecognizeResponse.getResultsList().stream()
                             .map(response -> response.getAlternativesList().getFirst().getTranscript())
                             .forEach(results::add);
-                    System.out.println("ArrayList size: " + results.size());
                 }
                 @Override
                 public void onError(Throwable throwable) {
@@ -83,8 +82,9 @@ public class GoogleSpeech implements SpeechToText, AutoCloseable {
 
             RecognitionConfig config = RecognitionConfig.newBuilder()
                     .setEncoding(RecognitionConfig.AudioEncoding.LINEAR16)
-                    .setSampleRateHertz(44100)
+                    .setSampleRateHertz((int) audioInputStream.getFormat().getSampleRate())
                     .setEnableAutomaticPunctuation(true)
+                    .setAudioChannelCount(audioInputStream.getFormat().getChannels())
                     .setMaxAlternatives(1)
                     .setLanguageCode(languageCode)
                     .build();
@@ -97,39 +97,49 @@ public class GoogleSpeech implements SpeechToText, AutoCloseable {
                             .setStreamingConfig(streamingRecognitionConfig)
                             .build(); // The first request in a streaming call has to be a config
             clientStream.send(request);
-
-            System.out.println("Transcription started");
-            long startTime = System.nanoTime();
             try {
-                ByteString byteString;
-                while (true) {
-                    long estimatedTime = System.currentTimeMillis() - startTime;
-                    byte[] data = new byte[64000];
-                    if (audioInputStream.read(data) < 0) {
-                        System.out.println("no audio read");
-                    }
+                if (!targetDataLine.isOpen()) {
+                    targetDataLine.open(audioInputStream.getFormat());
+                }
 
-                    if (estimatedTime > durationInMillis) { // 60 seconds
+                if (!targetDataLine.isRunning()) {
+                    targetDataLine.start();
+                }
+            } catch (Exception e) {
+                return Optional.empty();
+            }
+
+            long startTime = System.nanoTime();
+            System.out.println("Transcription started");
+
+            try {
+                int byteArrayLength = 6400;
+                while (true) {
+                    long estimatedTime = System.nanoTime() - startTime;
+                    System.out.print("\033[F"); // Move cursor up
+                    System.out.print("\033[K"); // Clear the line
+                    System.out.println("Estimated time elapsed: " + estimatedTime + " ns");
+                    byte[] data = audioInputStream.readNBytes(byteArrayLength);
+
+                    if (estimatedTime > durationInNanos) {
                         System.out.println("Stop speaking.");
                         targetDataLine.stop();
                         targetDataLine.close();
                         break;
                     }
 
-                    byteString = ByteString.copyFrom(data);
-
                     request =
                             StreamingRecognizeRequest.newBuilder()
-                                    .setAudioContent(byteString)
+                                    .setAudioContent(ByteString.copyFrom(data))
                                     .build();
                     clientStream.send(request);
-                    System.gc();
                 }
             } catch (Exception e) {
                 e.printStackTrace();
                 return Optional.empty();
             }
             System.out.println("Transcription ended");
+            responseObserver.onComplete();
             return Optional.of(results);
         });
 

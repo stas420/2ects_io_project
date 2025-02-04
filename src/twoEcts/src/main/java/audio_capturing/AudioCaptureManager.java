@@ -1,18 +1,13 @@
-package AudioCapturing;
+package audio_capturing;
 
 import speech_to_text.GoogleSpeech;
 
 import javax.sound.sampled.*;
 import java.io.File;
-import java.io.FileInputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.Optional;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 public class AudioCaptureManager {
 
