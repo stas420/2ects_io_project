@@ -1,4 +1,4 @@
-package ScreenCapturing;
+package screen_capture;
 
 /*
     This class implements the following functionalities:
@@ -101,8 +101,10 @@ public class ScreenCaptureManager {
         this.robot = null;
         this.outputDirectory = "";
         this.scheduler = null;
-        this.Screenshots.clear();
-        this.Screenshots = null;
+        if (this.Screenshots != null) {
+            this.Screenshots.clear();
+            this.Screenshots = null;
+        }
 
         System.out.println("ScreenCaptureManager::Deactivate");
     }
