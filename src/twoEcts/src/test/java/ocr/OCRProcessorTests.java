@@ -18,14 +18,9 @@ import static org.mockito.Mockito.*;
 class OCRProcessorTests {
 
     private OCRProcessor ocrProcessor;
-    private ITesseractPool tesseractPoolMock;
-    private ITesseract tesseractMock;
 
     @BeforeEach
     void setUp() throws InterruptedException {
-        tesseractPoolMock = mock(ITesseractPool.class);
-        tesseractMock = mock(ITesseract.class);
-        when(tesseractPoolMock.borrow()).thenReturn(tesseractMock);
         ocrProcessor = new OCRProcessor(2);
     }
 
@@ -37,7 +32,6 @@ class OCRProcessorTests {
     @Test
     void testProcessFile() throws ExecutionException, InterruptedException, TesseractException {
         File imageFile = new File("test.png");
-        when(tesseractMock.doOCR(imageFile)).thenReturn("Test OCR Result");
 
         Future<Optional<String>> result = ocrProcessor.process(imageFile);
         assertTrue(result.get().isPresent());
@@ -47,7 +41,6 @@ class OCRProcessorTests {
     @Test
     void testProcessBufferedImage() throws ExecutionException, InterruptedException, TesseractException {
         BufferedImage image = new BufferedImage(100, 100, BufferedImage.TYPE_INT_ARGB);
-        when(tesseractMock.doOCR(image)).thenReturn("Test OCR Result");
 
         Future<Optional<String>> result = ocrProcessor.process(image);
         assertTrue(result.get().isPresent());

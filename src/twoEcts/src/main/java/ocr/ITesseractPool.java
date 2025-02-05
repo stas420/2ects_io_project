@@ -3,6 +3,8 @@ package ocr;
 import net.sourceforge.tess4j.ITesseract;
 import net.sourceforge.tess4j.Tesseract;
 
+import java.io.File;
+import java.nio.file.Path;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
@@ -18,6 +20,8 @@ class ITesseractPool {
         for (int i = 0; i < poolSize; i++) {
             ITesseract tesseract = new Tesseract();
             tesseract.setDatapath(tessdataPath);
+            Path path = new File(tessdataPath).toPath();
+            System.out.println("Tessdata path: " + path.toAbsolutePath());
             pool.add(tesseract);
         }
     }

@@ -49,6 +49,8 @@ public class AudioCaptureManager {
         audioCaptures = new ArrayList<>();
         googleSpeech = new GoogleSpeech();
 
+        active.set(true);
+
         if (AudioCaptureManager.getInstance().isActive()) {
             capturing = new Thread(() -> {
                 while (AudioCaptureManager.isActive()) {
@@ -58,9 +60,6 @@ public class AudioCaptureManager {
 
             capturing.start();
         }
-
-
-        active.set(true);
     }
 
     public static void Deactivate() {
@@ -132,7 +131,7 @@ public class AudioCaptureManager {
     }
 
     // audio capture utilities
-    private static final long recordingPeriod = 10000000; //< in nanoseconds = 10 ms
+    private static final long recordingPeriod = 1000000000; // (long) 1e; //< in nanoseconds = 10 ms
     private static final long waitingStep = 1000; //< in milliseconds
     private static final String langCode = "en-US";
     private static GoogleSpeech googleSpeech = null;
@@ -160,6 +159,7 @@ public class AudioCaptureManager {
         } catch (Exception e) {
             System.out.println("AudioCaptureManager::captureAudio | transcription error");
             e.printStackTrace();
+            AudioCaptureManager.getInstance().Deactivate();
         }
     }
 

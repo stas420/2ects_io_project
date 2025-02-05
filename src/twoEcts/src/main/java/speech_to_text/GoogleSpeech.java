@@ -71,7 +71,6 @@ public class GoogleSpeech implements SpeechToText, AutoCloseable {
                 }
                 @Override
                 public void onError(Throwable throwable) {
-                    throwable.printStackTrace();
                 }
                 @Override
                 public void onComplete() {}

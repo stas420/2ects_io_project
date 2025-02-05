@@ -49,7 +49,7 @@ public class MainProcessManager {
         }
 
 
-        runningThread.submit(new Thread(() -> {
+        runningThread.execute(new Thread(() -> {
             Optional<ScreenCapture> sc = Optional.empty();
             Optional<AudioCapture> ac = Optional.empty();
 
