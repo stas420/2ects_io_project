@@ -13,10 +13,14 @@ import java.awt.*;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Optional;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
@@ -45,7 +49,7 @@ public class MainProcessManager {
         }
 
 
-        runningThread = new Thread(() -> {
+        runningThread.submit(new Thread(() -> {
             Optional<ScreenCapture> sc = Optional.empty();
             Optional<AudioCapture> ac = Optional.empty();
 
@@ -53,7 +57,6 @@ public class MainProcessManager {
             OCRResult ocrResult = null;
             OCRProcessor ocrProcessor = new OCRProcessor(5);
 
-            // TODO - change for checking the arrays, not the presence
             sc = ScreenCaptureManager.getInstance().popTheOldestScreenshot();
             ac = AudioCaptureManager.getInstance().popTheOldestAudioCapture();
 
@@ -61,10 +64,10 @@ public class MainProcessManager {
                 try {
                     if (sc.isPresent()) {
                         ocrText = ocrProcessor.process(sc.get().getImage()).get();
-                    }
 
-                    if (ocrText.isPresent()) {
-                        ocrResult = new OCRResult(sc.get().getTimeStamp(), ocrText.get());
+                        if (ocrText.isPresent()) {
+                            ocrResult = new OCRResult(sc.get().getTimeStamp(), ocrText.get());
+                        }
                     }
 
                 } catch (Exception e) {
@@ -73,13 +76,17 @@ public class MainProcessManager {
                     continue;
                 }
 
-                if (document != null) {
+                if (document != null && ocrResult != null) {
                     // FIXME this won't run if ocrResult == null, see line 65
-                    if (ocrResult != null && ocrResult.getTimestamp() < ac.get().getTimestamp()) {
+                    if (ac.isPresent() && ocrResult.getTimestamp() < ac.get().getTimestamp()) {
                         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
                         try {
-                            ImageIO.write(sc.get().getImage(), "PNG", baos);
+                            if (sc.isPresent()) {
+                                ImageIO.write(sc.get().getImage(), "PNG", baos);
+                            } else {
+
+                            }
                         } catch (IOException e) {
                             System.out.println("MainProcessManager::Run | ImageIO exception");
                         }
@@ -90,18 +97,19 @@ public class MainProcessManager {
                         document.add(new Paragraph(ocrResult.getContent()));
                         document.add(new Paragraph(ac.get().getContent()));
                     } else {
-                        document.add(new Paragraph(ac.get().getContent()));
-                        if (ocrResult != null) {
-                            document.add(new Paragraph(ocrResult.getContent()));
-                        }
+                        ac.ifPresent(audio -> document.add(new Paragraph(audio.getContent())));
+                        document.add(new Paragraph(ocrResult.getContent()));
                     }
 
                 }
 
+                sc = ScreenCaptureManager.getInstance().popTheOldestScreenshot();
+                ac = AudioCaptureManager.getInstance().popTheOldestAudioCapture();
             }
-        });
+        }));
+        // deactiv
 
-        document.close();
+        MainProcessManager.getInstance().Deactivate();
     }
 
     // image saving
@@ -140,7 +148,7 @@ public class MainProcessManager {
     }
 
     // utilities
-    private static Thread runningThread = null;
+    private static ExecutorService runningThread = Executors.newSingleThreadExecutor();
 
     private static boolean Init() {
         TimestampManager.getInstance().Activate();
@@ -173,8 +181,6 @@ public class MainProcessManager {
             return false;
         }
         try {
-            runningThread.interrupt();
-
             isActive = false;
             document.close();
             document = null;
@@ -190,6 +196,32 @@ public class MainProcessManager {
         return true;
     }
 
+    /**
+     * Deactivate managers that generate audio and screen captures.
+     * Without them the running thread will stop after processing all remaining.
+     * Blocks thread until runningThread has stopped
+     * @return if the deactivation was a success
+     */
+    public boolean DeferredDeactivate(long timeoutInSeconds) {
+        AudioCaptureManager.Deactivate();
+        ScreenCaptureManager.getInstance().Deactivate();
+
+        //TimestampManager.getInstance().Deactivate();
+        while(true) {
+            if(AudioCaptureManager.getInstance().isActive() || ScreenCaptureManager.getInstance().isActivated()) {
+                continue;
+            }
+
+            TimestampManager.getInstance().Deactivate();
+            try {
+                return runningThread.awaitTermination(timeoutInSeconds, TimeUnit.SECONDS);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                return false;
+            }
+        }
+    }
+
     private static MainProcessManager instance = null;
 
     private MainProcessManager() {
@@ -197,8 +229,9 @@ public class MainProcessManager {
 
     public static void main(String[] args) throws Exception {
         Run();
-        System.out.println("Passed Run(), waiting 15 seconds");
-        Thread.sleep(15000);
-        getInstance().Deactivate();
+        System.out.println("Passed Run(), waiting 10 seconds");
+        Thread.sleep(10000);
+        System.out.println("Waiting over, exiting");
+        getInstance().DeferredDeactivate(10);
     }
 }
