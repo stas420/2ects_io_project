@@ -7,6 +7,7 @@
 3. [Testy Przechwytywania Ekranu (ScreenCaptureManagerTests)](#testy-przechwytywania-ekranu-screencapturemanagertests)
 4. [Testy Zrzutów Ekranu (ScreenCaptureTests)](#testy-zrzutów-ekranu-screencapturetests)
 5. [Testy Rozpoznawania Mowy (SpeechTests)](#testy-rozpoznawania-mowy-speechtests)
+6. [Testy OCR (OCRProcessorTests)](#testy-rozpoznawania-mowy-speechtests)
 
 ---
 
