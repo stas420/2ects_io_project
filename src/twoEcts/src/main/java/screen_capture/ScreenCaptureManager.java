@@ -43,8 +43,6 @@ public class ScreenCaptureManager {
 
     // functional utilities - isActivated(), Activate() and Deactivate()
     private AtomicBoolean isActivated = new AtomicBoolean(false);
-    private static final String dateTimeFormatPattern = "yyyy-MM-dd-HH-mm-ss"; //< TODO may be replaced with TimeManager class
-    private String outputDirectory = "";
     private Robot robot = null;
     private ScheduledExecutorService scheduler = null;
     private static final Integer screenshotPeriod = 5;
@@ -56,7 +54,6 @@ public class ScreenCaptureManager {
     public void Activate() {
         try {
             this.robot = new Robot();
-            this.outputDirectory = System.getProperty("user.home"); //< TODO we need some "tmp" directory
             this.Screenshots = new ArrayList<ScreenCapture>();
 
             this.isActivated.set(true);
@@ -99,7 +96,6 @@ public class ScreenCaptureManager {
         }
 
         this.robot = null;
-        this.outputDirectory = "";
         this.scheduler = null;
         if (this.Screenshots != null) {
             this.Screenshots.clear();

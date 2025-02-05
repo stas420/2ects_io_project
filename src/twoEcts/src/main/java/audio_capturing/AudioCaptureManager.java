@@ -1,15 +1,103 @@
 package audio_capturing;
 
 import speech_to_text.GoogleSpeech;
+import timestamping.TimestampManager;
 
 import javax.sound.sampled.*;
 import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicBoolean;
+/*
+    TODO:
+    - add scheduled audio capturing
+ */
 
 public class AudioCaptureManager {
+
+    // public usage
+    public static boolean isActive() {
+        return active.get();
+    }
+
+    public static void Activate() {
+        for (Mixer.Info mi : AudioSystem.getMixerInfo()) {
+            System.out.println(mi);
+            if (mi.getName().contains("efault")) {
+                info = mi;
+            }
+        }
+
+        if (info == null) {
+            System.out.println("AudioCaptureManager::Activate | No mixer found");
+            return;
+        }
+
+        try {
+            targetDataLine = AudioSystem.getTargetDataLine(audioFormat, info);
+            audioInputStream = new AudioInputStream(targetDataLine);
+        } catch (Exception e) {
+            System.out.println("AudioCaptureManager::Activate | Error opening target data line and fetching audio input stream");
+            e.printStackTrace();
+            return;
+        }
+
+        audioCaptures = new ArrayList<>();
+        googleSpeech = new GoogleSpeech();
+
+        active.set(true);
+    }
+
+    public static void Deactivate() {
+        try {
+            audioInputStream.close();
+            googleSpeech.close();
+        } catch (Exception e) {
+            System.out.println("AudioCaptureManager::Deactivate | Error closing audio input stream or Google Speech");
+            e.printStackTrace();
+        }
+
+        targetDataLine.close();
+
+        audioInputStream = null;
+        targetDataLine = null;
+        info = null;
+        googleSpeech = null;
+        audioCaptures = null;
+
+        active.set(false);
+    }
+
+    public static Optional<AudioCapture> popTheOldestAudioCapture() {
+        if ((!AudioCaptureManager.isActive()) || audioCaptures == null || audioCaptures.isEmpty()) {
+            return Optional.empty();
+        }
+
+        Optional<AudioCapture> _out = Optional.of(audioCaptures.getFirst());
+        long _timestamp = audioCaptures.getFirst().getTimestamp();
+        int _index = 0;
+
+        for (int i = 1; i < audioCaptures.size(); i++) {
+            if (audioCaptures.get(i).getTimestamp() < _timestamp) {
+                _index = i;
+                _timestamp = audioCaptures.get(i).getTimestamp();
+                _out = Optional.of(audioCaptures.get(i));
+            }
+        }
+
+        audioCaptures.remove(_index);
+        return _out;
+    }
+
+    // necessary private fields
+    private static final AtomicBoolean active = new AtomicBoolean(false);
+    private static Mixer.Info info = null;
+    private static TargetDataLine targetDataLine = null;
+    private static AudioInputStream audioInputStream = null;
+    private static final AudioFormat audioFormat = new AudioFormat(44100, 16, 2,
+            true, false);
+
 
     // singleton implementation
     private static AudioCaptureManager instance = null;
@@ -24,30 +112,41 @@ public class AudioCaptureManager {
     }
 
     // audio capture utilities
-    private static final AudioFormat format = new AudioFormat(44100, 16, 2,
-                                                        true, false);
-
-    private static final long recordingPeriod = 10000; //< in milliseconds
+    private static final long recordingPeriod = 10000000; //< in nanoseconds = 10 ms
     private static final long waitingStep = 1000; //< in milliseconds
-    private static final String path = System.getProperty("user.home") + File.separator + "audio.wav"; //< TODO change it!
+    private static final String langCode = "en-US";
+    private static GoogleSpeech googleSpeech = null;
+    private static List<AudioCapture> audioCaptures = null;
 
+    private static void captureAudio() {
+        if (!AudioCaptureManager.active.get()) {
+            System.out.println("AudioCaptureManager::captureAudio | Manager not activated");
+            return;
+        }
 
+        try {
+            long ts = TimestampManager.getInstance().getTimestamp();
+            Optional<List<String>> transcription = googleSpeech.transcribe(audioInputStream, targetDataLine, recordingPeriod, langCode).get();
+
+            if (transcription.isPresent()) {
+                String text = String.join("\n", transcription.get());
+                AudioCaptureManager.audioCaptures.add(new AudioCapture(ts, text));
+                System.out.println("AudioCaptureManager::captureAudio | new one added, timestamp: " + ts);
+            }
+            else {
+                System.out.println("AudioCaptureManager::captureAudio | No transcription found");
+            }
+
+        } catch (Exception e) {
+            System.out.println("AudioCaptureManager::captureAudio | transcription error");
+            e.printStackTrace();
+        }
+    }
+
+    /*
     public static void main(String[] args) {
 
 
-        Mixer.Info info = null;
-
-        for (Mixer.Info mi : AudioSystem.getMixerInfo()) {
-            System.out.println(mi);
-            if (mi.getName().contains("efault")) {
-                info = mi;
-            }
-        }
-
-        if (info == null) {
-            System.out.println("No mixer found");
-            return;
-        }
 
         try {
             TargetDataLine targetDataLine = AudioSystem.getTargetDataLine(format, info);
@@ -89,7 +188,7 @@ public class AudioCaptureManager {
             e.printStackTrace();
         }
 
-        /*
+        / *
         try {
             TargetDataLine line = (TargetDataLine) AudioSystem.getLine(info);
             String path = System.getProperty("user.home") + File.separator + "audio.wav";
@@ -117,6 +216,8 @@ public class AudioCaptureManager {
         catch (Exception e) {
             e.printStackTrace();
         }
-        */
+        * /
     }
+
+    */
 }
