@@ -97,10 +97,6 @@ public class ScreenCaptureManager {
 
         this.robot = null;
         this.scheduler = null;
-        if (this.Screenshots != null) {
-            this.Screenshots.clear();
-            this.Screenshots = null;
-        }
 
         System.out.println("ScreenCaptureManager::Deactivate");
     }
@@ -142,7 +138,7 @@ public class ScreenCaptureManager {
     // return Optional of ScreenCapture object with the lowest .getTimestamp() output,
     // and then *removes it* from the private list (hence why it's "pop")
     public Optional<ScreenCapture> popTheOldestScreenshot() {
-        if ((!this.isActivated.get()) || this.Screenshots == null || Screenshots.isEmpty()) {
+        if (this.Screenshots == null || Screenshots.isEmpty()) {
             return Optional.empty();
         }
 

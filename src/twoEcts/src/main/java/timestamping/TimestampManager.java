@@ -5,6 +5,7 @@ import java.time.temporal.ChronoUnit;
 
 public class TimestampManager {
 
+    // mx long in Java 9,223,372,036,854,775,807 = c.a. 2*10^12 hours
     // actual Timestamping
     public long getTimestamp() {
         if (startTime == null) {

@@ -8,6 +8,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 /*
     TODO:
@@ -46,11 +49,29 @@ public class AudioCaptureManager {
         audioCaptures = new ArrayList<>();
         googleSpeech = new GoogleSpeech();
 
+        if (AudioCaptureManager.getInstance().isActive()) {
+            capturing = new Thread(() -> {
+                while (AudioCaptureManager.isActive()) {
+                    AudioCaptureManager.getInstance().captureAudio();
+                }
+            });
+
+            capturing.start();
+        }
+
+
         active.set(true);
     }
 
     public static void Deactivate() {
         try {
+            active.set(false);
+
+            while (capturing.isAlive()) {
+                capturing.interrupt();
+                capturing.join();
+            }
+
             audioInputStream.close();
             googleSpeech.close();
         } catch (Exception e) {
@@ -64,13 +85,10 @@ public class AudioCaptureManager {
         targetDataLine = null;
         info = null;
         googleSpeech = null;
-        audioCaptures = null;
-
-        active.set(false);
     }
 
     public static Optional<AudioCapture> popTheOldestAudioCapture() {
-        if ((!AudioCaptureManager.isActive()) || audioCaptures == null || audioCaptures.isEmpty()) {
+        if (audioCaptures == null || audioCaptures.isEmpty()) {
             return Optional.empty();
         }
 
@@ -97,6 +115,8 @@ public class AudioCaptureManager {
     private static AudioInputStream audioInputStream = null;
     private static final AudioFormat audioFormat = new AudioFormat(44100, 16, 2,
             true, false);
+
+    private static Thread capturing = null;
 
 
     // singleton implementation

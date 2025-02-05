@@ -1,4 +1,7 @@
+import audio_capturing.AudioCaptureManager;
 import ocr.OCRProcessor;
+import screen_capture.ScreenCaptureManager;
+import timestamping.TimestampManager;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -8,6 +11,11 @@ import java.util.Optional;
 
 public class mainClass {
     public static void main(String[] args) {
+    }
+}
+
+/*
+
         OCRProcessor processor = new OCRProcessor(5);
         File image = new File("src/twoEcts/src/files/text.jpg");
         ExecutorService executor = Executors.newFixedThreadPool(5);
@@ -35,5 +43,6 @@ public class mainClass {
 
         executor.shutdown();
         processor.close();
-    }
-}
+
+
+ */
